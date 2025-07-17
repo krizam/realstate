@@ -32,7 +32,7 @@
     "react-slick": "^0.30.3",
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.2.2"
+    "swiper": "^11.2.2",
     "@emailjs/browser": "^3.11.0"
   }
   "devDependencies": {
