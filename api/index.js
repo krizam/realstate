@@ -24,7 +24,22 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+const allowedOrigins = [
+  'https://realstate-client-nnr9.onrender.com'
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow requests with no origin (e.g., Postman)
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+}));
 
 // Routes
 app.use('/api/user', userRouter);
@@ -36,7 +51,7 @@ app.use('/api/booking', bookingRoutes);
 app.use("/api/worker", workerRoutes);
 app.use("/api/shiftingRequest", shiftingRequestRoutes);
 app.use('/api/availability', availabilityRoutes);
-app.use('/api/payments', paymentRoutes); // Add the payment routes
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
