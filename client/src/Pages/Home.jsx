@@ -17,29 +17,28 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchListings = async () => {
-      try {
-        setLoading(true);
-        const [offers, rent, sale] = await Promise.all([
-          fetch('/api/listing/get?offer=true&limit=4').then(res => res.json()),
-          fetch('/api/listing/get?type=rent&limit=4').then(res => res.json()),
-          fetch('/api/listing/get?type=sale&limit=4').then(res => res.json())
-        ]);
+  const fetchListings = async () => {
+    try {
+      setLoading(true);
+      const apiUrl = import.meta.env.VITE_API_URL;
 
-        setListings({
-          offer: offers,
-          rent: rent,
-          sale: sale
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching listings:', error);
-        setLoading(false);
-      }
-    };
+      const [offers, rent, sale] = await Promise.all([
+        fetch(`${apiUrl}/listing/get?offer=true&limit=4`).then(res => res.json()),
+        fetch(`${apiUrl}/listing/get?type=rent&limit=4`).then(res => res.json()),
+        fetch(`${apiUrl}/listing/get?type=sale&limit=4`).then(res => res.json())
+      ]);
 
-    fetchListings();
-  }, []);
+      setListings({ offer: offers, rent: rent, sale: sale });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+      setLoading(false);
+    }
+  };
+
+  fetchListings();
+}, []);
+
 
   return (
     <div className="min-h-screen">
