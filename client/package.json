@@ -34,7 +34,7 @@
     "slick-carousel": "^1.8.1",
     "swiper": "^11.2.2",
     "@emailjs/browser": "^3.11.0"
-  }
+  },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@types/react": "^18.3.12",
