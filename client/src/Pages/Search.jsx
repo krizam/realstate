@@ -26,6 +26,7 @@ export default function Search() {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
+      const apiUrl = import.meta.env.VITE_API_URL; // points to your hosted backend
       const res = await fetch(`${apiUrl}/listing/get?${searchQuery}`);
       const data = await res.json();
       setShowMore(data.length > 8);
