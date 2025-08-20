@@ -12,6 +12,7 @@ function Signin() {
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const apiUrl = import.meta.env.VITE_API_URL; // Get API URL from environment variables
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -25,7 +26,7 @@ function Signin() {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch(`${apiUrl}/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,6 +114,7 @@ function Signin() {
                 type="email"
                 placeholder="name@example.com"
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 text-gray-800 bg-white hover:border-blue-300"
+                required
               />
             </div>
           </motion.div>
@@ -127,7 +129,12 @@ function Signin() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Forgot password?
+              </Link>
             </div>
             <div className="relative group">
               <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" />
@@ -137,6 +144,7 @@ function Signin() {
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 text-gray-800 bg-white hover:border-blue-300"
+                required
               />
               <button 
                 type="button"
@@ -200,7 +208,6 @@ function Signin() {
           <Link to={"/signup"} className="text-blue-600 font-medium hover:text-blue-800 transition-colors">
             Create account
           </Link>
-          
         </motion.p>
       </motion.div>
 
