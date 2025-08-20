@@ -26,7 +26,7 @@ export default function Search() {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`/api/listing/get?${searchQuery}`);
+      const res = await fetch(`${apiUrl}/listing/get?${searchQuery}`);
       const data = await res.json();
       setShowMore(data.length > 8);
       setListings(data);
@@ -60,7 +60,8 @@ export default function Search() {
   const onShowMoreClick = async () => {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', listings.length);
-    const res = await fetch(`/api/listing/get?${urlParams.toString()}`);
+    const res = await fetch(`${apiUrl}/listing/get?${urlParams.toString()}`);
+
     const data = await res.json();
     setShowMore(data.length >= 9);
     setListings([...listings, ...data]);
