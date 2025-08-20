@@ -30,6 +30,7 @@ function Listing() {
   const [loadingUserBookings, setLoadingUserBookings] = useState(false);
   
   const mainSliderRef = useRef(null);
+  const apiUrl = import.meta.env.VITE_API_URL; // Get API URL from environment variables
 
   const isBooked = searchParams.get('booked') === 'true';
 
@@ -52,7 +53,7 @@ function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/listing/get/${listingId}`);
+        const res = await fetch(`${apiUrl}/listing/get/${listingId}`);
         const data = await res.json();
         if (data.success === false) {
           setError(data.message || 'Failed to load listing.');
@@ -68,7 +69,7 @@ function Listing() {
     };
 
     fetchListing();
-  }, [listingId]);
+  }, [listingId, apiUrl]);
 
   // Fetch user's bookings for this property
   useEffect(() => {
@@ -77,7 +78,7 @@ function Listing() {
       
       try {
         setLoadingUserBookings(true);
-        const res = await fetch(`/api/booking/user/${currentUser._id}`);
+        const res = await fetch(`${apiUrl}/booking/user/${currentUser._id}`);
         const data = await res.json();
         
         if (data.success === false) {
@@ -100,7 +101,7 @@ function Listing() {
     };
 
     fetchUserBookings();
-  }, [currentUser, listingId]);
+  }, [currentUser, listingId, apiUrl]);
 
   const handleContactLandlord = () => {
     navigate(`/contact-landlord/${listingId}`);
