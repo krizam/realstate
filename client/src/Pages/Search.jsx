@@ -19,6 +19,7 @@ export default function Search() {
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const [isFilterExpanded, setIsFilterExpanded] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL; // Moved outside useEffect to be accessible everywhere
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -26,7 +27,6 @@ export default function Search() {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
-      const apiUrl = import.meta.env.VITE_API_URL; // points to your hosted backend
       const res = await fetch(`${apiUrl}/listing/get?${searchQuery}`);
       const data = await res.json();
       setShowMore(data.length > 8);
@@ -37,11 +37,19 @@ export default function Search() {
   }, [location.search]);
 
   const handleChange = (e) => {
-    const { id, value, checked } = e.target;
-    setSidebardata((prev) => ({
-      ...prev,
-      [id]: id === 'searchTerm' ? value : id === 'sort_order' ? value.split('_') : checked,
-    }));
+    const { id, value, checked, type } = e.target;
+    
+    if (type === 'checkbox') {
+      setSidebardata((prev) => ({
+        ...prev,
+        [id]: checked,
+      }));
+    } else {
+      setSidebardata((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -54,6 +62,8 @@ export default function Search() {
     if (sidebardata.parking) urlParams.set('parking', sidebardata.parking);
     if (sidebardata.furnished) urlParams.set('furnished', sidebardata.furnished);
     if (sidebardata.offer) urlParams.set('offer', sidebardata.offer);
+    urlParams.set('sort', sidebardata.sort);
+    urlParams.set('order', sidebardata.order);
 
     navigate(`/search?${urlParams.toString()}`);
   };
@@ -155,7 +165,6 @@ export default function Search() {
                           <button
                             key={type}
                             type="button"
-                            id={type}
                             className={`py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                               sidebardata.type === type
                                 ? 'bg-blue-600 text-white shadow-md'
@@ -223,6 +232,25 @@ export default function Search() {
                         </label>
                       </div>
                     </div>
+                    
+                    {/* Sort Options */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                      <select
+                        id="sort"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        value={`${sidebardata.sort}_${sidebardata.order}`}
+                        onChange={(e) => {
+                          const [sort, order] = e.target.value.split('_');
+                          setSidebardata({ ...sidebardata, sort, order });
+                        }}
+                      >
+                        <option value="created_at_desc">Newest First</option>
+                        <option value="created_at_asc">Oldest First</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="price_asc">Price: Low to High</option>
+                      </select>
+                    </div>
 
                     <div className="pt-4 border-t border-gray-200">
                       <button
@@ -269,8 +297,6 @@ export default function Search() {
                    `Showing ${listings.length} properties`}
                 </p>
               </div>
-
-              
             </div>
 
             {loading ? (
