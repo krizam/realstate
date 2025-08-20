@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdLocationOn, MdStar } from 'react-icons/md';
-import { FaBed, FaBath, FaRuler, FaParking, FaCouch, FaTag, FaCalendarAlt, FaLock, FaCheckCircle } from 'react-icons/fa';
-import { format, isPast } from 'date-fns';
+import { MdLocationOn } from 'react-icons/md';
+import { FaBed, FaBath, FaParking, FaCouch, FaCalendarAlt, FaLock, FaCheckCircle } from 'react-icons/fa';
+import { format } from 'date-fns';
 
 export default function ListingItem({ listing }) {
-  // Check if the listing is available or booked
-  const isBooked = listing.availability && listing.availability.isBooked;
-  const isUserBooking = listing.userBooking && listing.userBooking.hasBooked;
+  // Safely check if the listing is available or booked
+  const isBooked = listing?.availability?.isBooked || false;
+  const isUserBooking = listing?.userBooking?.hasBooked || false;
   
   // Get thumbnail image URL
   const getThumbnailUrl = () => {
@@ -26,8 +26,12 @@ export default function ListingItem({ listing }) {
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    return format(date, 'MMM dd, yyyy');
+    try {
+      const date = new Date(dateString);
+      return format(date, 'MMM dd, yyyy');
+    } catch (error) {
+      return "";
+    }
   };
   
   // Get booking status display information
@@ -45,7 +49,7 @@ export default function ListingItem({ listing }) {
             <div className="w-full p-4 text-white">
               <p className="flex items-center font-medium">
                 <FaCalendarAlt className="mr-2" />
-                Your booking: {formatDate(listing.userBooking.bookingDate)}
+                Your booking: {formatDate(listing.userBooking?.bookingDate)}
               </p>
             </div>
           </div>
@@ -64,7 +68,7 @@ export default function ListingItem({ listing }) {
             <div className="w-full p-4 text-white">
               <p className="flex items-center font-medium">
                 <FaCalendarAlt className="mr-2" />
-                Booked until: {formatDate(listing.availability.bookedUntil)}
+                Booked until: {formatDate(listing.availability?.bookedUntil)}
               </p>
             </div>
           </div>
@@ -123,7 +127,7 @@ export default function ListingItem({ listing }) {
           <div className="absolute bottom-4 right-4">
             <div className="px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md">
               <p className="font-bold text-gray-800">
-                ${listing.offer ? listing.discountPrice.toLocaleString() : listing.price.toLocaleString()}
+                ${listing.offer ? listing.discountPrice?.toLocaleString() : listing.price?.toLocaleString()}
                 {listing.type === 'rent' && <span className="text-xs font-normal text-gray-500">/month</span>}
               </p>
             </div>
